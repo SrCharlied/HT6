@@ -4,7 +4,6 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-// Clase Pokemon
 class Pokemon implements Serializable {
     private static final long serialVersionUID = 1L;
     

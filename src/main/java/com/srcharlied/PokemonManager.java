@@ -16,7 +16,6 @@ public class PokemonManager {
     }
 
     public void initialize() {
-        // Aquí va map
         Scanner scanner = new Scanner(System.in);
         System.out.println("Seleccione la implementación de Map que desea utilizar:");
         System.out.println("1 - HashMap");
@@ -55,7 +54,6 @@ public class PokemonManager {
         }
         
         try {
-            // Intentar leer el archivo con diferentes codificaciones
             List<String> lines;
             try {
                 lines = Files.readAllLines(Paths.get(filePath), java.nio.charset.StandardCharsets.UTF_8);
@@ -70,12 +68,10 @@ public class PokemonManager {
                 return;
             }
             
-            // Verificar y mostrar cabeceras
             String headerLine = lines.get(0);
             String[] headers = headerLine.split(",");
             System.out.println("Cabeceras encontradas: " + Arrays.toString(headers));
             
-            // Verificar si las cabeceras necesarias están presentes
             boolean hasNameHeader = false;
             for (String header : headers) {
                 if (header.trim().equals("Name")) hasNameHeader = true;
@@ -87,28 +83,23 @@ public class PokemonManager {
                 return;
             }
             
-            // Procesar las líneas de datos
             int validLines = 0;
             
             for (int i = 1; i < lines.size(); i++) {
                 String line = lines.get(i).trim();
                 
-                // Saltamos líneas vacías
                 if (line.isEmpty()) {
                     continue;
                 }
                 
                 try {
-                    // Manejo especial para valores con comas dentro de comillas
                     List<String> values = parseCsvLine(line);
                     
-                    // Verificamos si hay suficientes valores
                     if (values.size() < headers.length) {
                         System.out.println("Advertencia: La línea " + i + " no tiene suficientes campos.");
                         continue;
                     }
                     
-                    // Crear un objeto Pokemon con los valores
                     Pokemon pokemon = new Pokemon();
                     boolean validPokemon = true;
                     
@@ -135,7 +126,7 @@ public class PokemonManager {
                                     if (!value.isEmpty()) {
                                         pokemon.setType1(value);
                                     } else {
-                                        pokemon.setType1("Normal"); // Valor por defecto
+                                        pokemon.setType1("Normal"); 
                                     }
                                     break;
                                 case "Type2":
@@ -150,7 +141,7 @@ public class PokemonManager {
                                             pokemon.setHeight(Double.parseDouble(value));
                                         } catch (NumberFormatException e) {
                                             System.out.println("Advertencia: Valor de altura inválido en línea " + i + ": " + value);
-                                            pokemon.setHeight(0.0); // Valor por defecto
+                                            pokemon.setHeight(0.0); 
                                         }
                                     }
                                     break;
@@ -160,7 +151,7 @@ public class PokemonManager {
                                             pokemon.setWeight(Double.parseDouble(value));
                                         } catch (NumberFormatException e) {
                                             System.out.println("Advertencia: Valor de peso inválido en línea " + i + ": " + value);
-                                            pokemon.setWeight(0.0); // Valor por defecto
+                                            pokemon.setWeight(0.0);
                                         }
                                     }
                                     break;
@@ -173,7 +164,7 @@ public class PokemonManager {
                                             pokemon.setGeneration(Integer.parseInt(value));
                                         } catch (NumberFormatException e) {
                                             System.out.println("Advertencia: Valor de generación inválido en línea " + i + ": " + value);
-                                            pokemon.setGeneration(1); // Valor por defecto
+                                            pokemon.setGeneration(1); 
                                         }
                                     }
                                     break;
@@ -189,7 +180,6 @@ public class PokemonManager {
                         }
                     }
                     
-                    // Solo agregamos el Pokemon si tiene un nombre válido
                     if (validPokemon && pokemon.getName() != null && !pokemon.getName().isEmpty()) {
                         pokemonMap.put(pokemon.getName(), pokemon);
                         validLines++;
@@ -208,7 +198,6 @@ public class PokemonManager {
         }
     }
     
-    // Método auxiliar para manejar valores con comas dentro de comillas en CSV
     private List<String> parseCsvLine(String line) {
         List<String> result = new ArrayList<>();
         boolean inQuotes = false;
@@ -227,7 +216,6 @@ public class PokemonManager {
             }
         }
         
-        // No olvidar añadir el último valor
         result.add(currentValue.toString());
         
         return result;
@@ -264,7 +252,7 @@ public class PokemonManager {
         int option = 0;
         
         while (option != 6) {
-            System.out.println("\n===== MENÚ PRINCIPAL =====");
+            System.out.println("\n===== MENU PRINCIPAL =====");
             System.out.println("1. Agregar un Pokémon a mi colección");
             System.out.println("2. Mostrar datos de un Pokémon");
             System.out.println("3. Mostrar mi colección ordenada por tipo primario");
@@ -353,7 +341,7 @@ public class PokemonManager {
         
         userPokemons.sort(Comparator.comparing(Pokemon::getType1));
         
-        System.out.println("\n===== SU COLECCIÓN ORDENADA POR TIPO PRIMARIO =====");
+        System.out.println("\n===== COLECCIÓN ORDENADA POR TIPO PRIMARIO =====");
         System.out.printf("%-20s %-15s\n", "Nombre", "Tipo Primario");
         System.out.println("----------------------------------------");
         
@@ -363,7 +351,11 @@ public class PokemonManager {
     }
 
     private void showAllPokemonByType() {
+
+        Long inicio = System.nanoTime();
+
         List<Pokemon> allPokemons = new ArrayList<>(pokemonMap.values());
+
         
         allPokemons.sort(Comparator.comparing(Pokemon::getType1));
         
@@ -374,6 +366,12 @@ public class PokemonManager {
         for (Pokemon pokemon : allPokemons) {
             System.out.printf("%-20s %-15s\n", pokemon.getName(), pokemon.getType1());
         }
+
+        Long fin = System.nanoTime();
+
+        Long resultado = fin - inicio;
+        
+        System.out.println("El tiempo de ejecución fue:" + resultado);
     }
 
     private void findPokemonByAbility(Scanner scanner) {
